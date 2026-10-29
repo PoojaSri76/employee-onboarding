@@ -1,0 +1,36 @@
+sap.ui.define([
+    "sap/m/MessageToast"
+], function (MessageToast) {
+    'use strict';
+
+    return {
+        /**
+         * Generated event handler.
+         *
+         * @param oEvent the event object provided by the event provider.
+         */
+        onPressEmployee: async function (oEvent) {
+            // Get the clicked Employee Code
+            const oContext = oEvent.getSource().getBindingContext();
+
+            const sEmployeeCode = oContext.getProperty(
+                "employee_employeeCode"
+            );
+            // Get SAP Fiori Launchpad navigation service
+            const oCrossAppNav =
+                await sap.ushell.Container.getServiceAsync(
+                    "CrossApplicationNavigation"
+                );
+
+            // Navigate to Employee application object page
+            oCrossAppNav.toExternal({
+                target: {
+                    semanticObject: "onboarding",
+                    action: "manage"
+                },
+                appSpecificRoute:
+                    "/Employees(" + sEmployeeCode + ")"
+            });
+        }
+    };
+});

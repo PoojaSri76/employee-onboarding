@@ -1,0 +1,121 @@
+
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards">
+
+    <VBox id="VBox"
+        width="100%"
+        class="sapUiMediumMargin">
+
+        <f:GridContainer
+            id="assetGrid"
+            width="100%"
+            snapToRow="true">
+
+            <f:layout>
+                <f:GridContainerSettings
+                    rowSize="5rem"
+                    columnSize="20rem"
+                    gap="1rem"/>
+            </f:layout>
+
+            <!-- Asset Details Card -->
+            <f:Card width="100%">
+                <f:header>
+                    <card:Header
+                        title="Asset Details"
+                        iconSrc="sap-icon://product"/>
+                </f:header>
+
+                <f:content>
+                    <VBox class="sapUiSmallMargin">
+
+                        <Label text="Asset Name"/>
+                        <Text text="{assetName}"
+                            class="sapUiSmallMarginBottom"/>
+
+                        <Label text="Asset Tag"/>
+                        <Text text="{assetTag}"
+                            class="sapUiSmallMarginBottom"/>
+
+                        <Label text="Asset Type Code"/>
+                        <Text text="{assetType_typeCode}"
+                            class="sapUiSmallMarginBottom"/>
+
+                        <Label text="Asset Type"/>
+                        <Text text="{assetType/typeName}"
+                            class="sapUiSmallMarginBottom"/>
+
+                        <Label text="Serial Number"/>
+                        <Text text="{serialNumber}"/>
+
+                    </VBox>
+                </f:content>
+            </f:Card>
+
+            <!-- Status Card -->
+            <f:Card width="100%">
+                <f:header>
+                    <card:Header
+                        title="Status &amp; Location"
+                        iconSrc="sap-icon://map"/>
+                </f:header>
+
+                <f:content>
+                    <VBox class="sapUiSmallMargin">
+
+                        <Label text="Status"/>
+                        <ObjectStatus
+							text="{status}"
+							class="sapUiSmallMarginBottom"
+							state="{= ${status} === 'AVAILABLE' ? 'Success' :
+									${status} === 'ALLOCATED' ? 'Information' :
+									${status} === 'MAINTENANCE' ? 'Warning' :
+									${status} === 'RETIRED' ? 'Error' : 'None' }"/>
+
+                        <Label text="Condition"/>
+                        <ObjectStatus
+							text="{condition}"
+							class="sapUiSmallMarginBottom"
+							state="{= ${condition} === 'GOOD' ? 'Success' :
+									${condition} === 'FAIR' ? 'Warning' :
+									${condition} === 'POOR' ? 'Error' : 'None' }"/>
+
+                        <Label text="Location"/>
+                        <Text text="{location}"/>
+
+                    </VBox>
+                </f:content>
+            </f:Card>
+
+            <!-- Purchase Card -->
+            <f:Card width="100%">
+                <f:header>
+                    <card:Header
+                        title="Purchase Information"
+                        iconSrc="sap-icon://money-bills"/>
+                </f:header>
+
+                <f:content>
+                    <VBox class="sapUiSmallMargin">
+
+                        <Label text="Purchase Cost"/>
+                        <ObjectNumber
+                            number="{purchaseCost}"
+                            unit="INR"
+                            class="sapUiSmallMarginBottom"/>
+
+                        <Label text="Purchase Date"/>
+                        <Text text="{purchaseDate}"/>
+
+                    </VBox>
+                </f:content>
+            </f:Card>
+
+        </f:GridContainer>
+
+    </VBox>
+
+</core:FragmentDefinition>

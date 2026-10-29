@@ -1,0 +1,265 @@
+{
+  "_version": "1.90.0",
+  "sap.app": {
+    "id": "assetmanagementanalytical",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:alp",
+      "version": "1.34.0",
+      "toolsId": "2afae4ef-f8d6-4ccc-85e7-456582ae1fab"
+    },
+    "dataSources": {
+      "annotation": {
+        "type": "ODataAnnotation",
+        "uri": "annotations/annotation.xml",
+        "settings": {
+          "localUri": "annotations/annotation.xml"
+        }
+      },
+      "mainService": {
+        "uri": "/odata/v4/asset-management/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "annotation"
+          ],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "asset_management-display": {
+          "semanticObject": "asset_management",
+          "action": "display",
+          "title": "{{asset_management-display.flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.153.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "assetmanagementanalytical.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "AssetsList",
+          "target": "AssetsList"
+        },
+        {
+          "pattern": "Assets({key}):?query:",
+          "name": "AssetsObjectPage",
+          "target": "AssetsObjectPage"
+        },
+        {
+          "pattern": "Assets({key})/allocations({key2}):?query:",
+          "name": "AssetAllocationsObjectPage",
+          "target": "AssetAllocationsObjectPage"
+        }
+      ],
+      "targets": {
+        "AssetsList": {
+          "type": "Component",
+          "id": "AssetsList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/Assets",
+              "variantManagement": "Page",
+              "navigation": {
+                "Assets": {
+                  "detail": {
+                    "route": "AssetsObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "GridTable",
+                    "selectionMode": "None"
+                  },
+                  "actions": {
+                    "InspectAsset": {
+                      "press": "assetmanagementanalytical.ext.controller.InspectAsset.InspectAsset",
+                      "visible": true,
+                      "enabled": true,
+                      "requiresSelection": true,
+                      "text": "Inspect Asset Readiness"
+                    }
+                  }
+                },
+                "@com.sap.vocabularies.UI.v1.SelectionFields": {
+                  "filterFields": {
+                    "AssetCustomFilter": {
+                      "label": "Asset Age Category",
+                      "template": "assetmanagementanalytical.ext.fragment.AssetAgeCustomFilter",
+                      "position": {
+                        "placement": "After",
+                        "anchor": "assetTag"
+                      }
+                    }
+                  }
+                }
+              },
+              "views": {
+                "paths": [
+                  {
+                    "primary": [
+                      {
+                        "annotationPath": "com.sap.vocabularies.UI.v1.PresentationVariant"
+                      }
+                    ],
+                    "secondary": [
+                      {
+                        "annotationPath": "com.sap.vocabularies.UI.v1.LineItem"
+                      }
+                    ],
+                    "defaultPath": "both"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "AssetsObjectPage": {
+          "type": "Component",
+          "id": "AssetsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Assets",
+              "navigation": {
+                "allocations": {
+                  "detail": {
+                    "route": "AssetAllocationsObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "allocations/@com.sap.vocabularies.UI.v1.LineItem#AllocatedTo": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              },
+              "content": {
+                "body": {
+                  "sections": {
+                    "AssetInfo": {
+                      "template": "assetmanagementanalytical.ext.fragment.AssetInfo",
+                      "title": "Asset Information",
+                      "position": {
+                        "placement": "Before",
+                        "anchor": "AllocatedTo"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "AssetAllocationsObjectPage": {
+          "type": "Component",
+          "id": "AssetAllocationsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Assets/allocations",
+              "content": {
+                "body": {
+                  "sections": {
+                    "AllocationInfo": {
+                      "template": "assetmanagementanalytical.ext.fragment.AllocationInfo"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "analytical"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "assetmanagementanalytical"
+  }
+}

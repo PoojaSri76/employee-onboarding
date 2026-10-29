@@ -1,0 +1,124 @@
+
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards">
+
+    <VBox
+        id="VBox1"
+        width="100%"
+		core:require="{ handler: 'assetmanagementanalytical/ext/fragment/AllocationInfo'}">
+	
+        <Title
+            text="Asset Allocation Details"
+            level="H3"
+            class="sapUiMediumMarginBottom"/>
+
+        <!-- Allocation Information -->
+        <f:Card width="100%" class="sapUiSmallMarginBottom">
+
+            <f:header>
+                <card:Header
+                    title="Allocation Information"
+                    iconSrc="sap-icon://product"/>
+            </f:header>
+
+            <f:content>
+                <HBox
+                    width="100%"
+                    justifyContent="SpaceAround"
+                    alignItems="Start"
+                    class="sapUiMediumMarginTopBottom">
+
+                    <VBox>
+                        <Label text="Allocation Code"/>
+                        <Text text="{allocationCode}"/>
+                    </VBox>
+
+                    <VBox>
+                        <Label text="Asset Tag"/>
+                        <Text text="{asset_assetTag}"/>
+                    </VBox>
+
+                    <VBox>
+                        <Label text="Employee Code"/>
+                        <Link 
+                            text="{employee_employeeCode}" 
+                            endIcon="sap-icon://action"
+                            press="handler.onPressEmployee"/>
+                    </VBox>
+
+                    <VBox>
+                        <Label text="Status"/>
+                        <ObjectStatus
+                            text="{status}"
+                            state="{= ${status} === 'ALLOCATED' ? 'Information' :
+                                      ${status} === 'RETURNED' ? 'Success' :
+                                      ${status} === 'OVERDUE' ? 'Error' : 'None' }"/>
+                    </VBox>
+
+                </HBox>
+            </f:content>
+        </f:Card>
+
+        <!-- Allocation Timeline -->
+        <f:Card width="100%" class="sapUiSmallMarginBottom">
+
+            <f:header>
+                <card:Header
+                    title="Allocation Timeline"
+                    iconSrc="sap-icon://calendar"/>
+            </f:header>
+
+            <f:content>
+                <HBox
+                    width="100%"
+                    justifyContent="SpaceAround"
+                    alignItems="Start"
+                    class="sapUiMediumMarginTopBottom">
+
+                    <VBox>
+                        <Label text="Allocated Date"/>
+                        <Text text="{allocatedDate}"/>
+                    </VBox>
+
+                    <VBox>
+                        <Label text="Expected Return Date"/>
+                        <Text text="{expectedReturnDate}"/>
+                    </VBox>
+
+                    <VBox>
+                        <Label text="Returned Date"/>
+                        <Text
+                            text="{= ${returnedDate} ? ${returnedDate} : 'Not Returned Yet' }"/>
+                    </VBox>
+
+                </HBox>
+            </f:content>
+        </f:Card>
+
+        <!-- Additional Information -->
+        <f:Card width="100%" class="sapUiSmallMarginBottom">
+
+            <f:header>
+                <card:Header
+                    title="Additional Information"
+                    iconSrc="sap-icon://notes"/>
+            </f:header>
+
+            <f:content>
+                <VBox class="sapUiMediumMargin">
+
+                    <Label text="Remarks"/>
+                    <Text
+                        text="{remarks}"
+                        wrapping="true"/>
+
+                </VBox>
+            </f:content>
+        </f:Card>
+
+    </VBox>
+
+</core:FragmentDefinition>

@@ -1,0 +1,204 @@
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Communication.xml">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Analytics.xml">
+        <edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/odata/v4/asset-management/$metadata">
+        <edmx:Include Namespace="AssetManagementService"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="local">
+            <Annotations Target="AssetManagementService.Assets">
+                <Annotation Term="UI.Chart">
+                    <Record Type="UI.ChartDefinitionType">
+                        <PropertyValue Property="Title" String="Asset Availability Analysis"/>
+                        <PropertyValue Property="ChartType" EnumMember="UI.ChartType/Bar"/>
+                        <PropertyValue Property="Dimensions">
+                            <Collection>
+                                <PropertyPath>status</PropertyPath>
+                                <PropertyPath>condition</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Measures">
+                            <Collection>
+                                <PropertyPath>assetCount</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="DimensionAttributes">
+                            <Collection>
+                                <Record Type="UI.ChartDimensionAttributeType">
+                                    <PropertyValue Property="Dimension" PropertyPath="status"/>
+                                    <PropertyValue Property="Role" EnumMember="UI.ChartDimensionRoleType/Category"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="MeasureAttributes">
+                            <Collection>
+                                <Record Type="UI.ChartMeasureAttributeType">
+                                    <PropertyValue Property="Measure" PropertyPath="assetCount"/>
+                                    <PropertyValue Property="Role" EnumMember="UI.ChartMeasureRoleType/Axis1"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="DynamicMeasures">
+                            <Collection>
+                                <AnnotationPath>@Analytics.AggregatedProperty#assetCount_sum</AnnotationPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Analytics.AggregatedProperty" Qualifier="assetCount_sum">
+                    <Record Type="Analytics.AggregatedPropertyType">
+                        <PropertyValue Property="Name" String="assetCount_sum"/>
+                        <PropertyValue Property="AggregatableProperty" PropertyPath="assetCount"/>
+                        <PropertyValue Property="AggregationMethod" String="sum"/>
+                        <Annotation Term="Common.Label" String="Asset"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>assetTag</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Allocated History"/>
+                            <PropertyValue Property="ID" String="AllocatedTo"/>
+                            <PropertyValue Property="Target" AnnotationPath="allocations/@UI.LineItem#AllocatedTo"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="AssetManagementService.Assets/assetTag">
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="CollectionPath" String="Assets"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="assetTag"/>
+                                    <PropertyValue Property="ValueListProperty" String="assetTag"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Label" String="Asset Tag"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+                <Annotation Term="Common.Text" Path="assetName"></Annotation>
+                <Annotation Term="Common.Label" String="Asset Tag"/>
+            </Annotations>
+            <Annotations Target="AssetManagementService.AssetAllocations">
+                <Annotation Term="UI.LineItem" Qualifier="AllocatedTo">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="asset/allocations/allocationCode"/>
+                            <PropertyValue Property="Label" String="allocationCode"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="asset/allocations/allocatedDate"/>
+                            <PropertyValue Property="Label" String="allocatedDate"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="asset/allocations/employee_employeeCode"/>
+                            <PropertyValue Property="Label" String="employee_employeeCode"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="asset/allocations/status"/>
+                            <PropertyValue Property="Label" String="status"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection></Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="AllocationDetails">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="allocatedDate"/>
+                                    <PropertyValue Property="Label" String="allocatedDate"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="allocationCode"/>
+                                    <PropertyValue Property="Label" String="allocationCode"/>
+                                </Record>
+                                <Record Type="UI.DataFieldForAnnotation">
+                                    <PropertyValue Property="Target" AnnotationPath="@UI.ConnectedFields#connected"/>
+                                    <PropertyValue Property="Label" String="Asset"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="employee_employeeCode"/>
+                                    <PropertyValue Property="Label" String="employee_employeeCode"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="status"/>
+                                    <PropertyValue Property="Label" String="status"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="asset/location"/>
+                                    <PropertyValue Property="Label" String="location"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="expectedReturnDate"/>
+                                    <PropertyValue Property="Label" String="expectedReturnDate"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="returnedDate"/>
+                                    <PropertyValue Property="Label" String="returnedDate"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="remarks"/>
+                                    <PropertyValue Property="Label" String="remarks"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Communication.Contact" Qualifier="contact">
+                    <Record Type="Communication.ContactType">
+                        <PropertyValue Property="fn" Path="employee_employeeCode"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.ConnectedFields" Qualifier="connected">
+                    <Record Type="UI.ConnectedFieldsType">
+                        <PropertyValue Property="Template" String="{asset_assetTag}-{asset_assetName}"/>
+                        <PropertyValue Property="Data">
+                            <Record Type="Core.Dictionary">
+                                <PropertyValue Property="asset_assetTag">
+                                    <Record Type="UI.DataField">
+                                        <PropertyValue Property="Value" Path="asset_assetTag"/>
+                                    </Record>
+                                </PropertyValue>
+                                <PropertyValue Property="asset_assetName">
+                                    <Record Type="UI.DataField">
+                                        <PropertyValue Property="Value" Path="asset/assetName"/>
+                                    </Record>
+                                </PropertyValue>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="AssetManagementService.Assets/purchaseDate">
+                <Annotation Term="Common.Label" String="purchaseDate"/>
+            </Annotations>
+            <Annotations Target="AssetManagementService.Assets/condition">
+                <Annotation Term="Common.Label" String="condition"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

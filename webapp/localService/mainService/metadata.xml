@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Aggregation.V1.xml">
+        <edmx:Include Alias="Aggregation" Namespace="Org.OData.Aggregation.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
+        <edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="AssetManagementService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotation Term="Core.Links">
+                <Collection>
+                    <Record>
+                        <PropertyValue Property="rel" String="author"/>
+                        <PropertyValue Property="href" String="https://cap.cloud.sap"/>
+                    </Record>
+                </Collection>
+            </Annotation>
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Assets" EntityType="AssetManagementService.Assets">
+                    <NavigationPropertyBinding Path="assetType" Target="AssetTypes"/>
+                    <NavigationPropertyBinding Path="allocations" Target="AssetAllocations"/>
+                </EntitySet>
+                <EntitySet Name="AssetTypes" EntityType="AssetManagementService.AssetTypes">
+                    <NavigationPropertyBinding Path="assets" Target="Assets"/>
+                </EntitySet>
+                <EntitySet Name="AssetAllocations" EntityType="AssetManagementService.AssetAllocations">
+                    <NavigationPropertyBinding Path="asset" Target="Assets"/>
+                </EntitySet>
+            </EntityContainer>
+            <EntityType Name="Assets">
+                <Key>
+                    <PropertyRef Name="assetTag"/>
+                </Key>
+                <Property Name="assetTag" Type="Edm.String" MaxLength="30" Nullable="false"/>
+                <Property Name="assetName" Type="Edm.String" MaxLength="100" Nullable="false"/>
+                <Property Name="serialNumber" Type="Edm.String" MaxLength="100"/>
+                <NavigationProperty Name="assetType" Type="AssetManagementService.AssetTypes" Partner="assets">
+                    <ReferentialConstraint Property="assetType_typeCode" ReferencedProperty="typeCode"/>
+                </NavigationProperty>
+                <Property Name="assetType_typeCode" Type="Edm.String" MaxLength="20"/>
+                <Property Name="purchaseDate" Type="Edm.Date"/>
+                <Property Name="purchaseCost" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="location" Type="Edm.String" MaxLength="100"/>
+                <Property Name="condition" Type="Edm.String" MaxLength="20" DefaultValue="NEW"/>
+                <Property Name="status" Type="Edm.String" MaxLength="20" DefaultValue="AVAILABLE"/>
+                <NavigationProperty Name="allocations" Type="Collection(AssetManagementService.AssetAllocations)" Partner="asset"/>
+                <Property Name="assetCount" Type="Edm.Int32"/>
+            </EntityType>
+            <EntityType Name="AssetTypes">
+                <Key>
+                    <PropertyRef Name="typeCode"/>
+                </Key>
+                <Property Name="typeCode" Type="Edm.String" MaxLength="20" Nullable="false"/>
+                <Property Name="typeName" Type="Edm.String" MaxLength="100" Nullable="false"/>
+                <NavigationProperty Name="assets" Type="Collection(AssetManagementService.Assets)" Partner="assetType"/>
+            </EntityType>
+            <EntityType Name="AssetAllocations">
+                <Key>
+                    <PropertyRef Name="allocationCode"/>
+                </Key>
+                <Property Name="allocationCode" Type="Edm.String" MaxLength="30" Nullable="false"/>
+                <Property Name="employee_employeeCode" Type="Edm.String" MaxLength="20" Nullable="false"/>
+                <NavigationProperty Name="asset" Type="AssetManagementService.Assets" Nullable="false" Partner="allocations">
+                    <ReferentialConstraint Property="asset_assetTag" ReferencedProperty="assetTag"/>
+                </NavigationProperty>
+                <Property Name="asset_assetTag" Type="Edm.String" MaxLength="30" Nullable="false"/>
+                <Property Name="allocatedDate" Type="Edm.Date" Nullable="false"/>
+                <Property Name="expectedReturnDate" Type="Edm.Date"/>
+                <Property Name="returnedDate" Type="Edm.Date"/>
+                <Property Name="status" Type="Edm.String" MaxLength="20" DefaultValue="ALLOCATED"/>
+                <Property Name="remarks" Type="Edm.String" MaxLength="500"/>
+            </EntityType>
+            <Annotations Target="AssetManagementService.Assets">
+                <Annotation Term="Aggregation.ApplySupported">
+                    <Record Type="Aggregation.ApplySupportedType">
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                                <String>orderby</String>
+                                <String>top</String>
+                                <String>skip</String>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="GroupableProperties">
+                            <Collection>
+                                <PropertyPath>status</PropertyPath>
+                                <PropertyPath>condition</PropertyPath>
+                                <PropertyPath>location</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="AggregatableProperties">
+                            <Collection>
+                                <Record Type="Aggregation.AggregatablePropertyType">
+                                    <PropertyValue Property="Property" PropertyPath="assetCount"/>
+                                    <PropertyValue Property="SupportedAggregationMethods">
+                                        <Collection>
+                                            <String>sum</String>
+                                        </Collection>
+                                    </PropertyValue>
+                                    <PropertyValue Property="RecommendedAggregationMethod" String="sum"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>assetTag</PropertyPath>
+                        <PropertyPath>assetName</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Chart">
+                    <Record Type="UI.ChartDefinitionType">
+                        <PropertyValue Property="Title" String="Asset Count by Status"/>
+                        <PropertyValue Property="ChartType" EnumMember="UI.ChartType/Column"/>
+                        <PropertyValue Property="Dimensions">
+                            <Collection>
+                                <PropertyPath>status</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Measures">
+                            <Collection>
+                                <PropertyPath>assetCount</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="DimensionAttributes">
+                            <Collection>
+                                <Record Type="UI.ChartDimensionAttributeType">
+                                    <PropertyValue Property="Dimension" PropertyPath="status"/>
+                                    <PropertyValue Property="Role" EnumMember="UI.ChartDimensionRoleType/Category"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="MeasureAttributes">
+                            <Collection>
+                                <Record Type="UI.ChartMeasureAttributeType">
+                                    <PropertyValue Property="Measure" PropertyPath="assetCount"/>
+                                    <PropertyValue Property="Role" EnumMember="UI.ChartMeasureRoleType/Axis1"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.PresentationVariant">
+                    <Record Type="UI.PresentationVariantType">
+                        <PropertyValue Property="Visualizations">
+                            <Collection>
+                                <AnnotationPath>@UI.Chart</AnnotationPath>
+                                <AnnotationPath>@UI.LineItem</AnnotationPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="SortOrder">
+                            <Collection>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="status"/>
+                                    <PropertyValue Property="Descending" Bool="false"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="assetTag"/>
+                            <PropertyValue Property="Label" String="Asset Tag"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="assetName"/>
+                            <PropertyValue Property="Label" String="Asset Name"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status"/>
+                            <PropertyValue Property="Label" String="Status"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="condition"/>
+                            <PropertyValue Property="Label" String="Condition"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="location"/>
+                            <PropertyValue Property="Label" String="Location"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="AssetManagementService.EntityContainer/Assets">
+                <Annotation Term="Aggregation.ApplySupported">
+                    <Record Type="Aggregation.ApplySupportedType">
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                                <String>orderby</String>
+                                <String>top</String>
+                                <String>skip</String>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="GroupableProperties">
+                            <Collection>
+                                <PropertyPath>status</PropertyPath>
+                                <PropertyPath>condition</PropertyPath>
+                                <PropertyPath>location</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="AggregatableProperties">
+                            <Collection>
+                                <Record Type="Aggregation.AggregatablePropertyType">
+                                    <PropertyValue Property="Property" PropertyPath="assetCount"/>
+                                    <PropertyValue Property="SupportedAggregationMethods">
+                                        <Collection>
+                                            <String>sum</String>
+                                        </Collection>
+                                    </PropertyValue>
+                                    <PropertyValue Property="RecommendedAggregationMethod" String="sum"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.PresentationVariant">
+                    <Record Type="UI.PresentationVariantType">
+                        <PropertyValue Property="Visualizations">
+                            <Collection>
+                                <AnnotationPath>@UI.Chart</AnnotationPath>
+                                <AnnotationPath>@UI.LineItem</AnnotationPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="SortOrder">
+                            <Collection>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="status"/>
+                                    <PropertyValue Property="Descending" Bool="false"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="AssetManagementService.Assets/condition">
+                <Annotation Term="Validation.AllowedValues">
+                    <Collection>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="NEW"/>
+                            <PropertyValue Property="Value" String="NEW"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="GOOD"/>
+                            <PropertyValue Property="Value" String="GOOD"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="FAIR"/>
+                            <PropertyValue Property="Value" String="FAIR"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="DAMAGED"/>
+                            <PropertyValue Property="Value" String="DAMAGED"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="AssetManagementService.Assets/status">
+                <Annotation Term="Validation.AllowedValues">
+                    <Collection>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="AVAILABLE"/>
+                            <PropertyValue Property="Value" String="AVAILABLE"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="ALLOCATED"/>
+                            <PropertyValue Property="Value" String="ALLOCATED"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="MAINTENANCE"/>
+                            <PropertyValue Property="Value" String="MAINTENANCE"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="RETIRED"/>
+                            <PropertyValue Property="Value" String="RETIRED"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="AssetManagementService.Assets/assetCount">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="AssetManagementService.AssetAllocations/status">
+                <Annotation Term="Validation.AllowedValues">
+                    <Collection>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="ALLOCATED"/>
+                            <PropertyValue Property="Value" String="ALLOCATED"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="RETURNED"/>
+                            <PropertyValue Property="Value" String="RETURNED"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

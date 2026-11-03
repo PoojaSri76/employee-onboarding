@@ -129,6 +129,12 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
+              "inlineEdit": {
+                "disabledFields": [
+                  "status",
+                  "condition"
+                ]
+              },
               "contextPath": "/Assets",
               "variantManagement": "Page",
               "navigation": {
@@ -142,7 +148,32 @@
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
                     "type": "GridTable",
-                    "selectionMode": "None"
+                    "selectionMode": "None",
+                    "enableMassEdit": {
+                      "visibleFields": "status, condition",
+                      "ignoredFields": "assetName"
+                    },
+                    "quickVariantSelection": {
+                      "showCounts": true,
+                      "paths": [
+                        {
+                          "key": "All",
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant"
+                        },
+                        {
+                          "key": "Available",
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#Available"
+                        },
+                        {
+                          "key": "Allocated",
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#Allocated"
+                        },
+                        {
+                          "key": "Maintenance",
+                          "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#Maintenance"
+                        }
+                      ]
+                    }
                   },
                   "actions": {
                     "InspectAsset": {

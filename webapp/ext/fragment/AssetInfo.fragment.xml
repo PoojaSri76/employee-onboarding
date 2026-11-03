@@ -5,12 +5,9 @@
     xmlns:f="sap.f"
     xmlns:card="sap.f.cards">
 
-    <VBox id="VBox"
-        width="100%"
-        class="sapUiMediumMargin">
+    <VBox width="100%" class="sapUiMediumMargin">
 
         <f:GridContainer
-            id="assetGrid"
             width="100%"
             snapToRow="true">
 
@@ -21,7 +18,7 @@
                     gap="1rem"/>
             </f:layout>
 
-            <!-- Asset Details Card -->
+            <!-- Asset Details -->
             <f:Card width="100%">
                 <f:header>
                     <card:Header
@@ -34,28 +31,51 @@
 
                         <Label text="Asset Name"/>
                         <Text text="{assetName}"
-                            class="sapUiSmallMarginBottom"/>
+                            visible="{= ${ui>/editMode} === 'Display' }"/>
+                        <Input value="{assetName}"
+                            visible="{= ${ui>/editMode} !== 'Display' }"/>
 
-                        <Label text="Asset Tag"/>
+                        <Label text="Asset Tag" class="sapUiSmallMarginTop"/>
                         <Text text="{assetTag}"
-                            class="sapUiSmallMarginBottom"/>
+                            visible="{= ${ui>/editMode} === 'Display' }"/>
+                        <Input value="{assetTag}"
+                            editable="{= ${ui>/editMode} === 'Editable' }"
+                            visible="{= ${ui>/editMode} !== 'Display' }"/>
 
-                        <Label text="Asset Type Code"/>
-                        <Text text="{assetType_typeCode}"
-                            class="sapUiSmallMarginBottom"/>
+                        <Label text="Asset Type" 
+                            class="sapUiSmallMarginTop" />
+                            <Text
+                                text="{assetType_typeCode}"
+                                visible="{= ${ui>/editMode} === 'Display' }"/>
 
-                        <Label text="Asset Type"/>
+                            <ComboBox
+                                width="100%"
+                                selectedKey="{assetType_typeCode}"
+                                visible="{= ${ui>/editMode} !== 'Display' }"
+                                items="{/AssetTypes}">
+
+                                <core:ListItem
+                                    key="{typeCode}"
+                                    text="{typeName}"
+                                    additionalText="{typeCode}"/>
+
+                            </ComboBox>
+
+                        <!-- <Label text="Asset Type" class="sapUiSmallMarginTop"/> -->
                         <Text text="{assetType/typeName}"
-                            class="sapUiSmallMarginBottom"/>
+                            visible="{= ${ui>/editMode} === 'Display' }"/>
 
-                        <Label text="Serial Number"/>
-                        <Text text="{serialNumber}"/>
+                        <Label text="Serial Number" class="sapUiSmallMarginTop"/>
+                        <Text text="{serialNumber}"
+                            visible="{= ${ui>/editMode} === 'Display' }"/>
+                        <Input value="{serialNumber}"
+                            visible="{= ${ui>/editMode} !== 'Display' }"/>
 
                     </VBox>
                 </f:content>
             </f:Card>
 
-            <!-- Status Card -->
+            <!-- Status and Location -->
             <f:Card width="100%">
                 <f:header>
                     <card:Header
@@ -68,29 +88,45 @@
 
                         <Label text="Status"/>
                         <ObjectStatus
-							text="{status}"
-							class="sapUiSmallMarginBottom"
-							state="{= ${status} === 'AVAILABLE' ? 'Success' :
-									${status} === 'ALLOCATED' ? 'Information' :
-									${status} === 'MAINTENANCE' ? 'Warning' :
-									${status} === 'RETIRED' ? 'Error' : 'None' }"/>
+                            text="{status}"
+                            visible="{= ${ui>/editMode} === 'Display' }"/>
 
-                        <Label text="Condition"/>
+                        <Select
+                            selectedKey="{status}"
+                            visible="{= ${ui>/editMode} !== 'Display' }"
+                            width="100%">
+                            <core:Item key="AVAILABLE" text="Available"/>
+                            <core:Item key="ALLOCATED" text="Allocated"/>
+                            <core:Item key="MAINTENANCE" text="Maintenance"/>
+                            <core:Item key="RETIRED" text="Retired"/>
+                        </Select>
+
+                        <Label text="Condition" class="sapUiSmallMarginTop"/>
                         <ObjectStatus
-							text="{condition}"
-							class="sapUiSmallMarginBottom"
-							state="{= ${condition} === 'GOOD' ? 'Success' :
-									${condition} === 'FAIR' ? 'Warning' :
-									${condition} === 'POOR' ? 'Error' : 'None' }"/>
+                            text="{condition}"
+                            visible="{= ${ui>/editMode} === 'Display' }"/>
 
-                        <Label text="Location"/>
-                        <Text text="{location}"/>
+                        <Select
+                            selectedKey="{condition}"
+                            visible="{= ${ui>/editMode} !== 'Display' }"
+                            width="100%">
+                            <core:Item key="NEW" text="New"/>
+                            <core:Item key="GOOD" text="Good"/>
+                            <core:Item key="FAIR" text="Fair"/>
+                            <core:Item key="DAMAGED" text="Damaged"/>
+                        </Select>
+
+                        <Label text="Location" class="sapUiSmallMarginTop"/>
+                        <Text text="{location}"
+                            visible="{= ${ui>/editMode} === 'Display' }"/>
+                        <Input value="{location}"
+                            visible="{= ${ui>/editMode} !== 'Display' }"/>
 
                     </VBox>
                 </f:content>
             </f:Card>
 
-            <!-- Purchase Card -->
+            <!-- Purchase Information -->
             <f:Card width="100%">
                 <f:header>
                     <card:Header
@@ -105,17 +141,27 @@
                         <ObjectNumber
                             number="{purchaseCost}"
                             unit="INR"
-                            class="sapUiSmallMarginBottom"/>
+                            visible="{= ${ui>/editMode} === 'Display' }"/>
 
-                        <Label text="Purchase Date"/>
-                        <Text text="{purchaseDate}"/>
+                        <Input
+                            value="{purchaseCost}"
+                            type="Number"
+                            visible="{= ${ui>/editMode} !== 'Display' }"/>
+
+                        <Label text="Purchase Date" class="sapUiSmallMarginTop"/>
+                        <Text text="{purchaseDate}"
+                            visible="{= ${ui>/editMode} === 'Display' }"/>
+
+                        <DatePicker
+                            value="{purchaseDate}"
+                            valueFormat="yyyy-MM-dd"
+                            displayFormat="dd-MM-yyyy"
+                            visible="{= ${ui>/editMode} !== 'Display' }"/>
 
                     </VBox>
                 </f:content>
             </f:Card>
 
         </f:GridContainer>
-
     </VBox>
-
 </core:FragmentDefinition>
